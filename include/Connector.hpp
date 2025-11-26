@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 #include <curl/curl.h>
+#include <json/json.h>
+#include <httplib.h>
 
 #include "Logger.hpp"
 #include "csvParser.hpp"
@@ -14,9 +16,11 @@ class ConnectionManager {
         std::string url;
     
     public:
-        int test_connection();
+        int send_request();
         ConnectionManager(std::string access_token);
+        void execute();
 };
+
 
 
 #endif // CONNECTOR_HPP
