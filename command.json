@@ -12,6 +12,7 @@
         "distance_max" : 0,
         "distance_min" : 0,
         "d+" : 0,
-        "duree": 0
+        "duree_min": 0,
+        "duree_max": 0
     }
 }

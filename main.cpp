@@ -27,7 +27,7 @@ int main(void)
 
     Analyzer analyzer;
 
-    analyzer.extract();
+    analyzer.set_up();
 
     cout << analyzer << endl;
 
