@@ -10,9 +10,9 @@ int main(void)
 
     // Récupération de l'acess_token
     Parser test = Parser("../var.csv");
+    
     std::string client_id = test.parse("CLIENT_ID");
     std::string client_secret = test.parse("CLIENT_SECRET");
-    
     StravaOAuth oauth ( stoi(client_id), client_secret, "http://localhost:8080/callback");
 
     oauth.authenticate();

@@ -36,4 +36,5 @@ private:
 
     void exchange_code_for_token();
     void refresh_access_token();
+    void open_authorization_page();
 };
