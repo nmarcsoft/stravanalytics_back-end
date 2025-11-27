@@ -2,6 +2,7 @@
 #include "csvParser.hpp"
 #include "Connector.hpp"
 #include "StravaOAuth.hpp"
+#include "Analyzer.hpp"
 
 
 int main(void)
@@ -13,17 +14,22 @@ int main(void)
     
     std::string client_id = test.parse("CLIENT_ID");
     std::string client_secret = test.parse("CLIENT_SECRET");
-    StravaOAuth oauth ( stoi(client_id), client_secret, "http://localhost:8080/callback");
+    //StravaOAuth oauth ( stoi(client_id), client_secret, "http://localhost:8080/callback");
 
-    oauth.authenticate();
-    std::string access_token = oauth.get_access_token();
+    //oauth.authenticate();
+    //std::string access_token = oauth.get_access_token();
     
-    logger.log(DEBUG, "Acess_token = " + access_token);
+    //logger.log(DEBUG, "Acess_token = " + access_token);
 
     // Connection à strava
-    ConnectionManager connection_manager (access_token);
+    //ConnectionManager connection_manager (access_token);
+    //connection_manager.execute();
 
-    connection_manager.execute();
+    Analyzer analyzer;
+
+    analyzer.extract();
+
+    cout << analyzer << endl;
 
     return 0;
 }

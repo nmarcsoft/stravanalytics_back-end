@@ -3,6 +3,15 @@
         "id" : "",
         "comments" : "",
         "kudos": "oui",
-        "laps": ""
+        "laps": "",
+        "contient": "Anais"
+    },
+
+    "filtre" : {
+        "nom" : ["Anais"],
+        "distance_max" : 0,
+        "distance_min" : 0,
+        "d+" : 0,
+        "duree": 0
     }
 }

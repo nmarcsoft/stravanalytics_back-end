@@ -24,7 +24,6 @@ int ConnectionManager::send_request() {
   std::string authHeader = "Authorization: Bearer " + this->access_token;
 
   struct curl_slist *headers = nullptr;
-  logger.log(DEBUG, this->access_token);
   headers = curl_slist_append(headers, authHeader.c_str());
 
   curl_easy_setopt(curl, CURLOPT_URL, this->url.c_str());
@@ -37,8 +36,6 @@ int ConnectionManager::send_request() {
   if (res != CURLE_OK) {
     std::cerr << "Erreur cURL : " << curl_easy_strerror(res) << std::endl;
   } else {
-    logger.log(DEBUG, "url = " + url);
-    logger.log(DEBUG, "response = " + response);
     std::ofstream outfile("strava_response.json");
     if (!outfile) {
       std::cerr << "Erreur : impossible de créer strava_response.json\n";
