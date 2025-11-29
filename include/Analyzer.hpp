@@ -5,7 +5,9 @@
 #include <Logger.hpp>
 #include <fstream>
 #include <json/json.h>
-
+#include <tuple>
+#include <ctime>
+#include <limits>
 
 class Analyzer {
 private:
@@ -17,14 +19,24 @@ private:
     int duree_min;
     int d_plus;
 
+    std::tuple<time_t, time_t> date;
+    vector<std::string> comments;
+
     std::ifstream file;
 
+    vector<Json::Value> filtered;
+
 public:
-    Analyzer() : distance_min(-1), distance_max(-1),
-        duree_min(-1), duree_max(-1),
-        d_plus(-1) 
+    Analyzer()
     {
-        name_filter = vector<std::string>();
+        this->distance_min = -1;
+        this->distance_max = -1;
+        this->duree_min = -1;
+        this->duree_max = -1;
+        this->d_plus = -1;
+        this->date = {0, std::numeric_limits<time_t>::max()};
+        this->name_filter = vector<std::string>();
+        this->filtered = vector<Json::Value>();
         file.open("../command.json");
         if (!file.is_open()) {
             throw std::runtime_error("Impossible d'ouvrir le fichier : command.json");
@@ -40,10 +52,38 @@ public:
     int set_up();
     int extract();
     void draw_graph();
+    void debug();
 
     friend std::ostream& operator<<(std::ostream& out, const Analyzer& other);
 
 };
+
+static int i = 0;
+time_t dateToTimestamp(const std::string& dateStr) {
+
+    if (dateStr == "")
+    {
+        if (i == 0)
+            return 0;
+        else
+            return std::numeric_limits<time_t>::max();
+    }
+    i++;
+    std::tm tm = {};
+    std::istringstream ss(dateStr);
+
+    ss >> std::get_time(&tm, "%d/%m/%Y");
+
+    if (ss.fail()) {
+        throw std::runtime_error("Format de date invalide");
+    }
+
+    tm.tm_hour = 0;
+    tm.tm_min  = 0;
+    tm.tm_sec  = 0;
+
+    return std::mktime(&tm);
+}
 
 int Analyzer::set_up() {
     
@@ -61,12 +101,14 @@ int Analyzer::set_up() {
         return 1;
     }
 
-    this->distance_min = root["filtre"]["distance_min"].asUInt();
-    this->distance_max = root["filtre"]["distance_max"].asUInt64();
+    this->distance_min = root["filtre"]["distance_min"].asInt();
+    this->distance_max = root["filtre"]["distance_max"].asInt();
     this->d_plus = root["filtre"]["d+"].asInt();
-    this->duree_min = root["filtre"]["duree_min"].asUInt64();
-    this->duree_max = root["filtre"]["duree_max"].asUInt64();
-    
+    this->duree_min = root["filtre"]["duree_min"].asInt();
+    this->duree_max = root["filtre"]["duree_max"].asInt();
+
+    //this->date = { (dateToTimestamp(root["filtre"][""][0].asString())), (dateToTimestamp(root["filtre"]["nom"][1].asString())) };
+
     for (auto &it : root["filtre"]["nom"])
     {
         name_filter.push_back(it.asString());
@@ -93,13 +135,14 @@ int Analyzer::extract()
         return 1;
     }
 
-    vector<Json::Value> filtered();
+    
     bool isOk = true;
 
     for (auto &run : root)
     {
         isOk = true;
         std::string name = run["name"].asString();
+        int distance_run = run["distance"].asInt();
         if (this->distance_min != -1 && (run["distance"].asInt() / 1000) < this->distance_min)
         {
             isOk = false;
@@ -107,10 +150,10 @@ int Analyzer::extract()
         else if (this->distance_max != -1 && (run["distance"].asInt() / 1000) > this->distance_max)
         {
             isOk = false;
-        } else if (this->duree_max != -1 && run["elapsed_time"].asInt() / 60 > this->duree_max)
+        } else if (this->duree_max != -1 && (run["elapsed_time"].asInt() / 60) > this->duree_max)
         {
             isOk = false;
-        } else if (this->duree_min != -1 && run["elapsed_time"].asInt() / 60 < this->duree_min)
+        } else if (this->duree_min != -1 && (run["elapsed_time"].asInt() / 60) < this->duree_min)
         {
             isOk = false;
         }
@@ -119,15 +162,23 @@ int Analyzer::extract()
         {
             for (auto & it : this->name_filter)
             {
-                if ( name.find(it) )
+                if ( name.find(it) != std::string::npos)
                 {
-                    filtered().push_back(it);
+                    this->filtered.push_back(it);
                 }
             }
         }
     }
 
     return 1;
+}
+
+void Analyzer::debug()
+{
+    for (auto &it : this->filtered)
+    {
+        cout << it << endl;
+    }
 }
 
 ostream& operator<< (ostream& out, const Analyzer& other)

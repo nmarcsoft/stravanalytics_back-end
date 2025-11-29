@@ -1,18 +1,21 @@
 {
     "activities" : {
-        "id" : "",
-        "comments" : "",
-        "kudos": "oui",
+        "id" : "88819816",
+        "comments" : "oui",
+        "kudos": "",
         "laps": "",
-        "contient": "Anais"
+        "contient": ""
     },
 
     "filtre" : {
-        "nom" : ["Anais"],
-        "distance_max" : 0,
-        "distance_min" : 0,
-        "d+" : 0,
-        "duree_min": 0,
-        "duree_max": 0
+        "nom" : ["Anaïs"],
+        "distance_max" : -1,
+        "distance_min" : -1,
+        "d+" : -1,
+        "duree_min": -1,
+        "duree_max": -1,
+        "date": ["", ""],
+        "comment" : []
+
     }
 }
