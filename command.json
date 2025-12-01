@@ -1,21 +1,21 @@
 {
     "activities" : {
-        "id" : "88819816",
-        "comments" : "oui",
+        "id" : "",
+        "comments" : "",
         "kudos": "",
         "laps": "",
         "contient": ""
     },
 
     "filtre" : {
-        "nom" : ["Anaïs"],
+        "nom" : ["VMA prépa"],
         "distance_max" : -1,
         "distance_min" : -1,
         "d+" : -1,
         "duree_min": -1,
         "duree_max": -1,
         "date": ["", ""],
-        "comment" : []
+        "description" : [] 
 
     }
 }

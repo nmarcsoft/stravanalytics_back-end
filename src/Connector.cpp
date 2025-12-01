@@ -26,6 +26,8 @@ int ConnectionManager::send_request() {
   struct curl_slist *headers = nullptr;
   headers = curl_slist_append(headers, authHeader.c_str());
 
+  logger.log(DEBUG, "url" + url);
+
   curl_easy_setopt(curl, CURLOPT_URL, this->url.c_str());
   curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeCallback);

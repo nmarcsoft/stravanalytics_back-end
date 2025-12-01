@@ -3,7 +3,8 @@
 #include "Connector.hpp"
 #include "StravaOAuth.hpp"
 #include "Analyzer.hpp"
-
+#include "matplotlibcpp.h"
+namespace plt = matplotlibcpp;
 
 int main(void)
 {
@@ -25,13 +26,17 @@ int main(void)
     ConnectionManager connection_manager (access_token);
     connection_manager.execute();
 
-    // Analyzer analyzer;
+    Analyzer analyzer;
 
-    // analyzer.set_up();
-    // analyzer.extract();
-    // analyzer.debug();
+    analyzer.set_up();
+    analyzer.extract();
+    //analyzer.debug();
     
-    // cout << analyzer << endl;
+    cout << analyzer << endl;
+
+    plt::plot({1, 3, 2, 4});
+    plt::save("test.pdf");
+    return 0;
 
     return 0;
 }

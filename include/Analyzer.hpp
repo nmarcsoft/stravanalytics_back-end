@@ -26,6 +26,8 @@ private:
 
     vector<Json::Value> filtered;
 
+    void sorter();
+
 public:
     Analyzer()
     {
@@ -53,6 +55,8 @@ public:
     int extract();
     void draw_graph();
     void debug();
+
+    
 
     friend std::ostream& operator<<(std::ostream& out, const Analyzer& other);
 
@@ -164,13 +168,23 @@ int Analyzer::extract()
             {
                 if ( name.find(it) != std::string::npos)
                 {
-                    this->filtered.push_back(it);
+                    this->filtered.push_back(run);
                 }
             }
         }
     }
-
+    this->sorter();
     return 1;
+}
+
+void Analyzer::sorter()
+{
+    std::sort(this->filtered.begin(), this->filtered.end(),
+    [](const Json::Value &a, const Json::Value &b) {
+        return a["name"].asString() < b["name"].asString();
+    }
+);
+
 }
 
 void Analyzer::debug()
@@ -195,4 +209,9 @@ ostream& operator<< (ostream& out, const Analyzer& other)
     
 
     return out;
+}
+
+void Analyzer::draw_graph()
+{
+    
 }
