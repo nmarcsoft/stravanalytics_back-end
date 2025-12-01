@@ -34,9 +34,5 @@ int main(void)
     
     cout << analyzer << endl;
 
-    plt::plot({1, 3, 2, 4});
-    plt::save("test.pdf");
-    return 0;
-
     return 0;
 }
