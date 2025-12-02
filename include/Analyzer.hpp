@@ -67,10 +67,9 @@ time_t dateToTimestamp(const std::string& dateStr) {
 
     if (dateStr == "")
     {
-        if (i == 0)
+        if (i == 1)
             return 0;
-        else
-            return std::numeric_limits<time_t>::max();
+        return std::numeric_limits<time_t>::max();
     }
     i++;
     std::tm tm = {};
@@ -87,6 +86,20 @@ time_t dateToTimestamp(const std::string& dateStr) {
     tm.tm_sec  = 0;
 
     return std::mktime(&tm);
+}
+
+time_t iso8601_to_timestamp(const std::string& iso8601)
+{
+    std::tm tm = {};
+    std::istringstream ss(iso8601);
+
+    ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%SZ");
+    if (ss.fail()) {
+        throw std::runtime_error("Erreur de parsing de la date !");
+    }
+
+    // Convertit en timestamp UTC
+    return timegm(&tm);  // IMPORTANT : timegm() = gmtime inverse
 }
 
 int Analyzer::set_up() {
@@ -111,7 +124,10 @@ int Analyzer::set_up() {
     this->duree_min = root["filtre"]["duree_min"].asInt();
     this->duree_max = root["filtre"]["duree_max"].asInt();
 
-    //this->date = { (dateToTimestamp(root["filtre"][""][0].asString())), (dateToTimestamp(root["filtre"]["nom"][1].asString())) };
+    time_t date_min = dateToTimestamp(root["filtre"]["date"][0].asString());
+    time_t date_max = dateToTimestamp(root["filtre"]["date"][1].asString());
+
+    this->date = { date_min, date_max };
 
     for (auto &it : root["filtre"]["nom"])
     {
@@ -147,6 +163,8 @@ int Analyzer::extract()
         isOk = true;
         std::string name = run["name"].asString();
         int distance_run = run["distance"].asInt();
+        time_t time = iso8601_to_timestamp(run["start_date"].asString());
+
         if (this->distance_min != -1 && (run["distance"].asInt() / 1000) < this->distance_min)
         {
             isOk = false;
@@ -160,6 +178,10 @@ int Analyzer::extract()
         } else if (this->duree_min != -1 && (run["elapsed_time"].asInt() / 60) < this->duree_min)
         {
             isOk = false;
+        } else if (time < std::get<0>(this->date))
+        {
+            if (time > std::get<1>(this->date))
+                isOk = false;
         }
         
         if (isOk)
@@ -168,6 +190,8 @@ int Analyzer::extract()
             {
                 if ( name.find(it) != std::string::npos)
                 {
+                    cout << "Ajout du footing avec une date de : " << time << \
+                    "comparé à [" << std::get<0>(this->date) << " : " << std::get<1>(this->date) << "]" << endl;
                     this->filtered.push_back(run);
                 }
             }
@@ -189,9 +213,11 @@ void Analyzer::sorter()
 
 void Analyzer::debug()
 {
+    ofstream filtered_run("output.json");
     for (auto &it : this->filtered)
     {
         cout << it << endl;
+        filtered_run << it << endl;
     }
 }
 

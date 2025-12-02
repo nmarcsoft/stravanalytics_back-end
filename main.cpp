@@ -30,7 +30,7 @@ int main(void)
 
     analyzer.set_up();
     analyzer.extract();
-    //analyzer.debug();
+    analyzer.debug();
     
     cout << analyzer << endl;
 

@@ -14,7 +14,7 @@
         "d+" : -1,
         "duree_min": -1,
         "duree_max": -1,
-        "date": ["", ""],
+        "date": ["", "01/01/2000"],
         "description" : [] 
 
     }
