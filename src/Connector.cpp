@@ -71,10 +71,8 @@ void ConnectionManager::execute() {
   }
 
   if (command.isMember("activities")) {
-    this->url = "https://www.strava.com/api/v3/activities"; // On veut récupérer
-                                                            // une activitée
-    if (command["activities"]["id"] !=
-        "") // On veut récupérer quelque chose sur une activités précise
+    this->url = "https://www.strava.com/api/v3/activities";
+    if (command["activities"]["id"] != "")
     {
       this->url.append("/");
       this->url = this->url.append(command["activities"]["id"].asString());
@@ -89,6 +87,7 @@ void ConnectionManager::execute() {
         this->url.append("/laps");
       }
     }
+    this->url.append("?per_page=200");
     send_request();
   }
 

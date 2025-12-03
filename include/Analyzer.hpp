@@ -13,11 +13,9 @@ class Analyzer {
 private:
     vector<std::string> name_filter;
 
-    int distance_min;
-    int distance_max;
-    int duree_max;
-    int duree_min;
-    int d_plus;
+    std::tuple<int, int> distance;
+    std::tuple<int, int> duree;
+    std::tuple<int, int> d_plus;
 
     std::tuple<time_t, time_t> date;
     vector<std::string> comments;
@@ -31,11 +29,9 @@ private:
 public:
     Analyzer()
     {
-        this->distance_min = -1;
-        this->distance_max = -1;
-        this->duree_min = -1;
-        this->duree_max = -1;
-        this->d_plus = -1;
+        this->distance = {-1, -1};
+        this->duree = {-1, -1};
+        this->d_plus = {-1, -1};
         this->date = {0, std::numeric_limits<time_t>::max()};
         this->name_filter = vector<std::string>();
         this->filtered = vector<Json::Value>();
@@ -64,14 +60,14 @@ public:
 
 static int i = 0;
 time_t dateToTimestamp(const std::string& dateStr) {
-
+    i++;
     if (dateStr == "")
     {
-        if (i == 1)
-            return 0;
-        return std::numeric_limits<time_t>::max();
+        if (i == 2)
+            return std::numeric_limits<time_t>::max();
+        return 0;
     }
-    i++;
+
     std::tm tm = {};
     std::istringstream ss(dateStr);
 
@@ -117,12 +113,10 @@ int Analyzer::set_up() {
         std::cerr << "Erreur JSON : " << errs << std::endl;
         return 1;
     }
-
-    this->distance_min = root["filtre"]["distance_min"].asInt();
-    this->distance_max = root["filtre"]["distance_max"].asInt();
-    this->d_plus = root["filtre"]["d+"].asInt();
-    this->duree_min = root["filtre"]["duree_min"].asInt();
-    this->duree_max = root["filtre"]["duree_max"].asInt();
+    
+    this->distance = {root["filtre"]["distance"][0].asInt(), root["filtre"]["distance"][1].asInt()};
+    this->d_plus = {root["filtre"]["d+"][0].asInt(), root["filtre"]["d+"][1].asInt()};
+    this->duree = {root["filtre"]["duree"][0].asInt(), root["filtre"]["duree"][1].asInt()};
 
     time_t date_min = dateToTimestamp(root["filtre"]["date"][0].asString());
     time_t date_max = dateToTimestamp(root["filtre"]["date"][1].asString());
@@ -164,24 +158,39 @@ int Analyzer::extract()
         std::string name = run["name"].asString();
         int distance_run = run["distance"].asInt();
         time_t time = iso8601_to_timestamp(run["start_date"].asString());
+        int elevation = run["total_elevation_gain"].asInt();
 
-        if (this->distance_min != -1 && (run["distance"].asInt() / 1000) < this->distance_min)
+        int distance_min, distance_max, duree_min, duree_max, d_plus_min, d_plus_max;
+        distance_min = std::get<0>(this->distance);
+        distance_max = std::get<1>(this->distance);
+        duree_min = std::get<0>(this->duree);
+        duree_max = std::get<1>(this->duree);
+        d_plus_min = std::get<0>(this->d_plus);
+        d_plus_max = std::get<1>(this->d_plus);
+
+        if (distance_min != -1 && (run["distance"].asInt() / 1000) < distance_min)
         {
             isOk = false;
         }
-        else if (this->distance_max != -1 && (run["distance"].asInt() / 1000) > this->distance_max)
+        else if (distance_max != -1 && (run["distance"].asInt() / 1000) > distance_max)
         {
             isOk = false;
-        } else if (this->duree_max != -1 && (run["elapsed_time"].asInt() / 60) > this->duree_max)
+        } else if (duree_max != -1 && (run["elapsed_time"].asInt() / 60) > duree_max)
         {
             isOk = false;
-        } else if (this->duree_min != -1 && (run["elapsed_time"].asInt() / 60) < this->duree_min)
+        } else if (duree_min != -1 && (run["elapsed_time"].asInt() / 60) < duree_min)
         {
             isOk = false;
         } else if (time < std::get<0>(this->date))
         {
             if (time > std::get<1>(this->date))
                 isOk = false;
+        } else if (d_plus_min != -1 && d_plus_min > elevation)
+        {
+            isOk = false;
+        } else if (d_plus_max != -1 && d_plus_max < elevation)
+        {
+            isOk = false;
         }
         
         if (isOk)
@@ -229,9 +238,9 @@ ostream& operator<< (ostream& out, const Analyzer& other)
         out << "\t- " << it << endl;
     }
     
-    out << "Distance filter : \n\t- [" << other.distance_min << ";" << other.distance_max << "]" << endl; 
-    out << "Déniveler filter : \n\t- " << other.d_plus << endl;
-    out << "Duree filter : \n\t- [" << other.duree_min << ";" << other.duree_max << "]" << endl; 
+    out << "Distance filter : \n\t- [" << std::get<0>(other.distance) << ";" << std::get<1>(other.distance) << "]" << endl; 
+    out << "Dénivelé filter : \n\t- [" << std::get<0>(other.d_plus) << ";" << std::get<1>(other.d_plus) << "]" << endl; 
+    out << "Duree filter : \n\t- [" << std::get<0>(other.duree) << ";" << std::get<1>(other.duree) << "]" << endl; 
     
 
     return out;

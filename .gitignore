@@ -3,3 +3,4 @@ var.csv
 logfile.txt
 .cache/
 .code/
+.vscode/
