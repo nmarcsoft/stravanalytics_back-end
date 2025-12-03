@@ -54,7 +54,20 @@ int ConnectionManager::send_request() {
   return 0;
 }
 
-void log(ofstream output_file, std::string to_print) {}
+time_t string_date_to_timestamp(const std::string &date)
+{
+    std::tm tm = {};
+    std::istringstream ss(date);
+
+
+    ss >> std::get_time(&tm, "%d/%m/%Y");
+    if (ss.fail()) {
+        throw std::runtime_error("Format invalide: " + date);
+    }
+
+    time_t toReturn = std::mktime(&tm);
+    return toReturn;
+}
 
 void ConnectionManager::execute() {
   std::ifstream command_file("../command.json", std::ifstream::binary);
@@ -88,12 +101,38 @@ void ConnectionManager::execute() {
       }
     }
     this->url.append("?per_page=200");
+
+    std::string before, after;
+    
+    if (command.isMember("filtre"))
+    {
+      if (command["filtre"].isMember("date"))
+      {
+        before = command["filtre"]["date"][1].asString();
+        after = command["filtre"]["date"][0].asString();
+      }
+    }
+
+    
+    if (before != "")
+    {
+      std::stringstream converter_before;
+      converter_before << string_date_to_timestamp(before);
+      this->url.append("&before=" + converter_before.str());
+    }
+
+    if (after != "")
+    {
+      std::stringstream converter_after;
+      converter_after << string_date_to_timestamp(after);
+      this->url.append("&after=" + converter_after.str());
+    }
+
     send_request();
   }
 
   if (command.isMember("athlete")) {
-    this->url = "https://www.strava.com/api/v3/athlete"; // On veut récupérer
-                                                         // une activitée
+    this->url = "https://www.strava.com/api/v3/athlete";
     if (command["athlete"]["activities"] != "") {
       this->url.append("/activities");
     }

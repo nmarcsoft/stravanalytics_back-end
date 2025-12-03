@@ -6,6 +6,9 @@
 #include <curl/curl.h>
 #include <json/json.h>
 #include <httplib.h>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
 
 #include "Logger.hpp"
 #include "csvParser.hpp"

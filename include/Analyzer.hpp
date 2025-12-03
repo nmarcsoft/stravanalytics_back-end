@@ -17,7 +17,6 @@ private:
     std::tuple<int, int> duree;
     std::tuple<int, int> d_plus;
 
-    std::tuple<time_t, time_t> date;
     vector<std::string> comments;
 
     std::ifstream file;
@@ -32,7 +31,6 @@ public:
         this->distance = {-1, -1};
         this->duree = {-1, -1};
         this->d_plus = {-1, -1};
-        this->date = {0, std::numeric_limits<time_t>::max()};
         this->name_filter = vector<std::string>();
         this->filtered = vector<Json::Value>();
         file.open("../command.json");
@@ -58,46 +56,6 @@ public:
 
 };
 
-static int i = 0;
-time_t dateToTimestamp(const std::string& dateStr) {
-    i++;
-    if (dateStr == "")
-    {
-        if (i == 2)
-            return std::numeric_limits<time_t>::max();
-        return 0;
-    }
-
-    std::tm tm = {};
-    std::istringstream ss(dateStr);
-
-    ss >> std::get_time(&tm, "%d/%m/%Y");
-
-    if (ss.fail()) {
-        throw std::runtime_error("Format de date invalide");
-    }
-
-    tm.tm_hour = 0;
-    tm.tm_min  = 0;
-    tm.tm_sec  = 0;
-
-    return std::mktime(&tm);
-}
-
-time_t iso8601_to_timestamp(const std::string& iso8601)
-{
-    std::tm tm = {};
-    std::istringstream ss(iso8601);
-
-    ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%SZ");
-    if (ss.fail()) {
-        throw std::runtime_error("Erreur de parsing de la date !");
-    }
-
-    // Convertit en timestamp UTC
-    return timegm(&tm);  // IMPORTANT : timegm() = gmtime inverse
-}
-
 int Analyzer::set_up() {
     
     if (!this->file.is_open()) {
@@ -110,18 +68,13 @@ int Analyzer::set_up() {
     JSONCPP_STRING errs;
 
     if (!parseFromStream(builder, this->file, &root, &errs)) {
-        std::cerr << "Erreur JSON : " << errs << std::endl;
+        std::cerr << "Erreur JSON - set up: " << errs << std::endl;
         return 1;
     }
     
     this->distance = {root["filtre"]["distance"][0].asInt(), root["filtre"]["distance"][1].asInt()};
     this->d_plus = {root["filtre"]["d+"][0].asInt(), root["filtre"]["d+"][1].asInt()};
     this->duree = {root["filtre"]["duree"][0].asInt(), root["filtre"]["duree"][1].asInt()};
-
-    time_t date_min = dateToTimestamp(root["filtre"]["date"][0].asString());
-    time_t date_max = dateToTimestamp(root["filtre"]["date"][1].asString());
-
-    this->date = { date_min, date_max };
 
     for (auto &it : root["filtre"]["nom"])
     {
@@ -145,7 +98,7 @@ int Analyzer::extract()
     JSONCPP_STRING errs;
 
     if (!parseFromStream(builder, input, &root, &errs)) {
-        std::cerr << "Erreur JSON : " << errs << std::endl;
+        std::cerr << "Erreur JSON - extract : " << errs << std::endl;
         return 1;
     }
 
@@ -157,7 +110,6 @@ int Analyzer::extract()
         isOk = true;
         std::string name = run["name"].asString();
         int distance_run = run["distance"].asInt();
-        time_t time = iso8601_to_timestamp(run["start_date"].asString());
         int elevation = run["total_elevation_gain"].asInt();
 
         int distance_min, distance_max, duree_min, duree_max, d_plus_min, d_plus_max;
@@ -181,10 +133,6 @@ int Analyzer::extract()
         } else if (duree_min != -1 && (run["elapsed_time"].asInt() / 60) < duree_min)
         {
             isOk = false;
-        } else if (time < std::get<0>(this->date))
-        {
-            if (time > std::get<1>(this->date))
-                isOk = false;
         } else if (d_plus_min != -1 && d_plus_min > elevation)
         {
             isOk = false;
@@ -199,8 +147,6 @@ int Analyzer::extract()
             {
                 if ( name.find(it) != std::string::npos)
                 {
-                    cout << "Ajout du footing avec une date de : " << time << \
-                    "comparé à [" << std::get<0>(this->date) << " : " << std::get<1>(this->date) << "]" << endl;
                     this->filtered.push_back(run);
                 }
             }
