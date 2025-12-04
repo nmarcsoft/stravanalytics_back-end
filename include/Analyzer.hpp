@@ -8,6 +8,9 @@
 #include <tuple>
 #include <ctime>
 #include <limits>
+#include <Python.h>
+
+enum graph_type { DEFAULT };
 
 class Analyzer {
 private:
@@ -47,7 +50,7 @@ public:
 
     int set_up();
     int extract();
-    void draw_graph();
+    void draw_graph(graph_type type);
     void debug();
 
     
@@ -192,7 +195,80 @@ ostream& operator<< (ostream& out, const Analyzer& other)
     return out;
 }
 
-void Analyzer::draw_graph()
-{
+double speed_to_pace(const double v) {
+    return (1000.0 / v) / 60.0;
+}
+
+void Analyzer::draw_graph(graph_type type = DEFAULT)
+{    
+    Py_Initialize();
+
+    if (type == DEFAULT)
+    {
+        std::ostringstream ss_speed;
+        std::ostringstream ss_bpm;
+        std::ostringstream ss_x;
+
+        // x = RUN y = PACE & BPM
+        vector<unsigned int> x;
+        unsigned int i = 0u;
+
+        vector<unsigned int> bpm;
+        vector<double> speed;
+        ss_speed << "[";
+        ss_bpm << "[";
+        ss_x << "[";
+        for (auto &it : this->filtered)
+        {
+            if (it.isMember("average_heartrate"))
+            {
+                ss_bpm << it["average_heartrate"].asInt();
+            } else {
+                ss_bpm << 0;
+            }
+            if (it.isMember("average_speed"))
+            {
+                ss_speed << speed_to_pace(it["average_speed"].asDouble());
+            } else {
+                ss_speed << 0.f;
+            }
+            ss_x << i;
+
+            if (i + 1 < this->filtered.size())
+            {
+                ss_speed << ", ";
+                ss_bpm << ", ";
+                ss_x << ", ";
+            }
+
+            i++;
+        }
+        ss_speed << "]";
+        ss_bpm << "]";
+        ss_x << "]";
+
+        string speed_list = ss_speed.str();
+        string bpm_list = ss_bpm.str();
+        string x_list = ss_x.str();
+        
+        std::stringstream script;
+        script <<
+            "import matplotlib.pyplot as plt\n"
+            "x = " << x_list << "\n"
+            "pace = " << speed_list << "\n"
+            "plt.figure(figsize=(10,5))\n"
+            "plt.plot(x, pace, marker='o')\n"
+            "plt.xlabel('Numéro du footing')\n"
+            "plt.ylabel('Allure (min/km)')\n"
+            "plt.title('Allure par footing')\n"
+            "plt.grid(True)\n"
+            "plt.gca().invert_yaxis()\n"
+            "plt.savefig('allure_par_footing.pdf')\n";
+
+        PyRun_SimpleString(script.str().c_str());
+
+        Py_Finalize();
     
+        std::cout << "Graphique généré : allure_par_footing.pdf\n";
+    }
 }

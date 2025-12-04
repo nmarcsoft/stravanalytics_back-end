@@ -4,7 +4,7 @@
 #include "StravaOAuth.hpp"
 #include "Analyzer.hpp"
 #include "matplotlibcpp.h"
-namespace plt = matplotlibcpp;
+
 
 int main(void)
 {
@@ -31,6 +31,8 @@ int main(void)
     analyzer.set_up();
     analyzer.extract();
     analyzer.debug();
+
+    analyzer.draw_graph();
     
     cout << analyzer << endl;
 
