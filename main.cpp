@@ -8,7 +8,7 @@ int main(void) {
   logger.log(INFO, "Program Started.");
 
   // Récupération de l'acess_token
-  Parser test = Parser("../var.csv");
+  Parser test = Parser("var.csv");
 
   std::string client_id = test.parse("CLIENT_ID");
   std::string client_secret = test.parse("CLIENT_SECRET");
@@ -29,7 +29,7 @@ int main(void) {
   analyzer.set_up();
   analyzer.extract();
 
-  analyzer.draw_graph();
+  analyzer.draw_graph(PER_TYPE);
 
   return 0;
 }

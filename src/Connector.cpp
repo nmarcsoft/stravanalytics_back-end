@@ -68,7 +68,7 @@ time_t string_date_to_timestamp(const std::string &date) {
 }
 
 void ConnectionManager::execute() {
-  std::ifstream command_file("../command.json", std::ifstream::binary);
+  std::ifstream command_file("command.json", std::ifstream::binary);
 
   Json::Value command;
   Json::CharReaderBuilder readerBuilder;
