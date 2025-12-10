@@ -3,6 +3,7 @@
 #include <Logger.hpp>
 #include <Python.h>
 #include <algorithm>
+#include <cstdlib>
 #include <ctime>
 #include <fstream>
 #include <iostream>
@@ -150,9 +151,8 @@ int Analyzer::extract() {
   return 1;
 }
 
-// Tri sur le nom des données
+// TODO sort the data
 void Analyzer::sorter() {
-
   std::sort(this->filtered.begin(), this->filtered.end(),
             [](const Json::Value &lha, const Json::Value &rha) {
               return lha["name"].asString() < rha["name"].asString();
