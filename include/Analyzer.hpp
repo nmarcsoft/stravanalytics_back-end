@@ -3,15 +3,18 @@
 #include <Logger.hpp>
 #include <Python.h>
 #include <algorithm>
+#include <cstdlib>
 #include <ctime>
 #include <fstream>
 #include <iostream>
 #include <json/json.h>
 #include <limits>
+#include <pylifecycle.h>
+#include <pythonrun.h>
 #include <string>
 #include <tuple>
 
-enum graph_type { DEFAULT };
+enum graph_type { DEFAULT, PER_TYPE };
 
 class Analyzer {
 private:
@@ -36,7 +39,7 @@ public:
     this->d_plus = {-1, -1};
     this->name_filter = vector<std::string>();
     this->filtered = vector<Json::Value>();
-    file.open("../command.json");
+    file.open("command.json");
     if (!file.is_open()) {
       throw std::runtime_error("Impossible d'ouvrir le fichier : command.json");
     }
@@ -148,9 +151,8 @@ int Analyzer::extract() {
   return 1;
 }
 
-// Tri sur le nom des données
+// TODO sort the data
 void Analyzer::sorter() {
-
   std::sort(this->filtered.begin(), this->filtered.end(),
             [](const Json::Value &lha, const Json::Value &rha) {
               return lha["name"].asString() < rha["name"].asString();
@@ -158,10 +160,9 @@ void Analyzer::sorter() {
 }
 
 void Analyzer::debug() {
-  ofstream filtered_run("output.json");
-  for (auto &it : this->filtered) {
-    cout << it << endl;
-    filtered_run << it << endl;
+  ofstream filtered_run("output/output.json");
+  for (auto &run : this->filtered) {
+    filtered_run << run;
   }
 }
 
@@ -184,7 +185,6 @@ ostream &operator<<(ostream &out, const Analyzer &other) {
 double speed_to_pace(const double v) { return (1000.0 / v) / 60.0; }
 
 void Analyzer::draw_graph(graph_type type = DEFAULT) {
-  Py_Initialize();
 
   if (type == DEFAULT) {
     std::ostringstream ss_speed;
@@ -195,11 +195,6 @@ void Analyzer::draw_graph(graph_type type = DEFAULT) {
     vector<unsigned int> x;
     unsigned int i = 0u;
 
-    vector<unsigned int> bpm;
-    vector<double> speed;
-    ss_speed << "[";
-    ss_bpm << "[";
-    ss_x << "[";
     for (auto &it : this->filtered) {
       if (it.isMember("average_heartrate")) {
         ss_bpm << it["average_heartrate"].asInt();
@@ -214,42 +209,74 @@ void Analyzer::draw_graph(graph_type type = DEFAULT) {
       ss_x << i;
 
       if (i + 1 < this->filtered.size()) {
-        ss_speed << ", ";
-        ss_bpm << ", ";
-        ss_x << ", ";
+        ss_speed << ",";
+        ss_bpm << ",";
+        ss_x << ",";
       }
 
       i++;
     }
-    ss_speed << "]";
-    ss_bpm << "]";
-    ss_x << "]";
-
     string speed_list = ss_speed.str();
     string bpm_list = ss_bpm.str();
     string x_list = ss_x.str();
 
-    std::stringstream script;
-    script << "import matplotlib.pyplot as plt\n"
-              "x = "
-           << x_list
-           << "\n"
-              "pace = "
-           << speed_list
-           << "\n"
-              "plt.figure(figsize=(10,5))\n"
-              "plt.plot(x, pace, marker='o')\n"
-              "plt.xlabel('Numéro du footing')\n"
-              "plt.ylabel('Allure (min/km)')\n"
-              "plt.title('Allure par footing')\n"
-              "plt.grid(True)\n"
-              "plt.gca().invert_yaxis()\n"
-              "plt.savefig('allure_par_footing.pdf')\n";
+    std::string file_to_execute = "src/graphics/graphique_pace.py";
+    std::string commande = "python3 ";
+    std::string argument = ss_x.str() + " " + ss_speed.str();
 
-    PyRun_SimpleString(script.str().c_str());
+    system((commande + file_to_execute + " " + argument).c_str());
+  } else if (type == PER_TYPE) {
 
-    Py_Finalize();
+    std::ostringstream x_list, pace_vma, pace_ef, bpm_vma, bpm_ef, other;
+    int i = 1;
 
-    std::cout << "Graphique généré : allure_par_footing.pdf\n";
+    for (auto &it : this->filtered) {
+      std::string name = it["name"].asString();
+      if (name.find("EF") != std::string::npos) {
+        // On a une EF
+        pace_ef << speed_to_pace(it["average_speed"].asDouble());
+        x_list << i;
+
+        pace_ef << ",";
+        x_list << ",";
+        i++;
+
+      } else if (name.find("VMA") != std::string::npos) {
+        // VMA
+        pace_vma << speed_to_pace(it["average_speed"].asDouble());
+        x_list << i;
+
+        pace_vma << ",";
+        x_list << ",";
+        i++;
+      }
+    }
+
+    string arg1 = x_list.str();
+    string arg2 = pace_vma.str();
+    string arg3 = pace_ef.str();
+
+    // Dirty code coming :
+    if (!arg1.empty()) {
+      arg1.pop_back();
+    }
+
+    if (!arg2.empty()) {
+      arg2.pop_back();
+    }
+
+    if (!arg3.empty()) {
+      arg3.pop_back();
+    }
+
+    cout << "arg1 = " << arg1 << endl;
+    cout << "arg2 = " << arg2 << endl;
+    cout << "arg3 = " << arg3 << endl;
+
+    std::string file_to_execute = "src/graphics/graphique_splited.py";
+    std::string commande = "python3 ";
+    std::string argument = arg1 + " " + arg2 + " " + arg3;
+
+    system((commande + file_to_execute + " " + argument).c_str());
   }
 }
