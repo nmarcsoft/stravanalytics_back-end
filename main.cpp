@@ -28,11 +28,8 @@ int main(void) {
 
   analyzer.set_up();
   analyzer.extract();
-  analyzer.debug();
 
   analyzer.draw_graph();
-
-  cout << analyzer << endl;
 
   return 0;
 }

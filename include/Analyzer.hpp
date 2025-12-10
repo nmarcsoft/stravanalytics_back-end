@@ -2,6 +2,7 @@
 
 #include <Logger.hpp>
 #include <Python.h>
+#include <algorithm>
 #include <ctime>
 #include <fstream>
 #include <iostream>
@@ -119,16 +120,13 @@ int Analyzer::extract() {
     d_plus_min = std::get<0>(this->d_plus);
     d_plus_max = std::get<1>(this->d_plus);
 
-    if (distance_min != -1 && (run["distance"].asInt() / 1000) < distance_min) {
+    if (distance_min != -1 && (run["distance"].asInt()) < distance_min) {
       isOk = false;
-    } else if (distance_max != -1 &&
-               (run["distance"].asInt() / 1000) > distance_max) {
+    } else if (distance_max != -1 && (run["distance"].asInt()) > distance_max) {
       isOk = false;
-    } else if (duree_max != -1 &&
-               (run["elapsed_time"].asInt() / 60) > duree_max) {
+    } else if (duree_max != -1 && (run["elapsed_time"].asInt()) > duree_max) {
       isOk = false;
-    } else if (duree_min != -1 &&
-               (run["elapsed_time"].asInt() / 60) < duree_min) {
+    } else if (duree_min != -1 && (run["elapsed_time"].asInt()) < duree_min) {
       isOk = false;
     } else if (d_plus_min != -1 && d_plus_min > elevation) {
       isOk = false;
@@ -150,8 +148,14 @@ int Analyzer::extract() {
   return 1;
 }
 
-// TODO sort the data
-void Analyzer::sorter() {}
+// Tri sur le nom des données
+void Analyzer::sorter() {
+
+  std::sort(this->filtered.begin(), this->filtered.end(),
+            [](const Json::Value &lha, const Json::Value &rha) {
+              return lha["name"].asString() < rha["name"].asString();
+            });
+}
 
 void Analyzer::debug() {
   ofstream filtered_run("output.json");

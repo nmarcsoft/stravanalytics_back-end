@@ -56,4 +56,3 @@ and the strava API is free, so we can make cool program pretty
 esealy with this API.
 This will also be usefull
 to track my progress for my goal of sub 42' on 10km !
-

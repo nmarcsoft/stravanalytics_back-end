@@ -1,17 +1,30 @@
 {
-    "activities" : {
-        "id" : "",
-        "comments" : "",
-        "kudos": "",
-        "laps": "",
-        "contient": ""
-    },
-
-    "filtre" : {
-        "nom" : [""],
-        "distance" : [-1, -1],
-        "duree": [-1, -1],
-        "d+" : [-1, 100],
-        "date": ["01/01/2025", "31/12/2025"],
-    }
+  "activities": {
+    "id": "",
+    "comments": "",
+    "kudos": "",
+    "laps": "",
+    "contient": ""
+  },
+  "filtre": {
+    "nom": [
+      "🟠"
+    ],
+    "distance": [
+      -1,
+      -1
+    ],
+    "duree": [
+      -1,
+      -1
+    ],
+    "d+": [
+      -1,
+      -1
+    ],
+    "date": [
+      "",
+      ""
+    ]
+  }
 }
