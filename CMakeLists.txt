@@ -10,7 +10,6 @@ find_package(Python3 COMPONENTS NumPy REQUIRED)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(/usr/include)
-include_directories(${PROJECT_SOURCE_DIR}/lib/matplotlib-cpp)
 
 add_executable(strava main.cpp src/Logger.cpp src/csvParser.cpp src/Connector.cpp src/StravaOAuth.cpp)
 target_link_libraries(strava PRIVATE CURL::libcurl jsoncpp OpenSSL::SSL OpenSSL::Crypto Python3::Python Python3::NumPy)

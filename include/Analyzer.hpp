@@ -150,12 +150,8 @@ int Analyzer::extract() {
   return 1;
 }
 
-void Analyzer::sorter() {
-  std::sort(this->filtered.begin(), this->filtered.end(),
-            [](const Json::Value &a, const Json::Value &b) {
-              return a["name"].asString() < b["name"].asString();
-            });
-}
+// TODO sort the data
+void Analyzer::sorter() {}
 
 void Analyzer::debug() {
   ofstream filtered_run("output.json");
