@@ -54,19 +54,17 @@ int ConnectionManager::send_request() {
   return 0;
 }
 
-time_t string_date_to_timestamp(const std::string &date)
-{
-    std::tm tm = {};
-    std::istringstream ss(date);
+time_t string_date_to_timestamp(const std::string &date) {
+  std::tm tm = {};
+  std::istringstream ss(date);
 
+  ss >> std::get_time(&tm, "%d/%m/%Y");
+  if (ss.fail()) {
+    throw std::runtime_error("Format invalide: " + date);
+  }
 
-    ss >> std::get_time(&tm, "%d/%m/%Y");
-    if (ss.fail()) {
-        throw std::runtime_error("Format invalide: " + date);
-    }
-
-    time_t toReturn = std::mktime(&tm);
-    return toReturn;
+  time_t toReturn = std::mktime(&tm);
+  return toReturn;
 }
 
 void ConnectionManager::execute() {
@@ -85,8 +83,7 @@ void ConnectionManager::execute() {
 
   if (command.isMember("activities")) {
     this->url = "https://www.strava.com/api/v3/activities";
-    if (command["activities"]["id"] != "")
-    {
+    if (command["activities"]["id"] != "") {
       this->url.append("/");
       this->url = this->url.append(command["activities"]["id"].asString());
 
@@ -103,26 +100,21 @@ void ConnectionManager::execute() {
     this->url.append("?per_page=200");
 
     std::string before, after;
-    
-    if (command.isMember("filtre"))
-    {
-      if (command["filtre"].isMember("date"))
-      {
+
+    if (command.isMember("filtre")) {
+      if (command["filtre"].isMember("date")) {
         before = command["filtre"]["date"][1].asString();
         after = command["filtre"]["date"][0].asString();
       }
     }
 
-    
-    if (before != "")
-    {
+    if (before != "") {
       std::stringstream converter_before;
       converter_before << string_date_to_timestamp(before);
       this->url.append("&before=" + converter_before.str());
     }
 
-    if (after != "")
-    {
+    if (after != "") {
       std::stringstream converter_after;
       converter_after << string_date_to_timestamp(after);
       this->url.append("&after=" + converter_after.str());

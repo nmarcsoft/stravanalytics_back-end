@@ -32,8 +32,8 @@ void StravaOAuth::start_local_server() {
                     << std::endl;
 
           res.set_content("<h2>Fermer cette page pour continuer</h2>",
-                          "text/html"); // TODO : à voir si possible de faire \
-            le reste sur page web
+                          "text/html"); // TODO : à voir si possible de faire le
+                                        // reste sur page web
 
           svr.stop(); // <-- STOP !
         }
