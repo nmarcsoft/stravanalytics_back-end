@@ -1,5 +1,3 @@
-#include "Analyzer.hpp"
-#include "Connector.hpp"
 #include "Logger.hpp"
 #include "StravaOAuth.hpp"
 #include "csvParser.hpp"
@@ -21,15 +19,6 @@ int main(void) {
   // logger.log(DEBUG, "Acess_token = " + access_token);
 
   // Connection à strava
-  ConnectionManager connection_manager(access_token);
-  connection_manager.execute();
-
-  Analyzer analyzer;
-
-  analyzer.set_up();
-  analyzer.extract();
-
-  analyzer.draw_graph(PER_TYPE);
 
   return 0;
 }
