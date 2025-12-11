@@ -11,7 +11,7 @@ def draw_pace(x_list, speed_list):
     plt.title('Allure par footing')
     plt.grid(True)
     plt.gca().invert_yaxis()
-    plt.savefig('output/allure_par_footing.pdf')
+    plt.savefig('output/allure_par_footing.png')
 
     print("Graphique généré")
 

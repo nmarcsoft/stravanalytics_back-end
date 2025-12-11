@@ -22,8 +22,6 @@ def draw_graph():
     #plt.legend()
     plt.grid(True)
     plt.gca().invert_yaxis()
-    plt.savefig('output/allure_par_footing_selon_type.pdf')
-
-    print("Graphique généré : allure_par_footing.pdf")
+    plt.savefig('output/allure_par_footing_selon_type.png')
 
 draw_graph()
