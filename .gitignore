@@ -4,3 +4,7 @@ logfile.txt
 .cache/
 .code/
 .vscode/
+CMakeCache.txt
+output/
+cmake_install.cmake
+output
