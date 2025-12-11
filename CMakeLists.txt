@@ -12,6 +12,6 @@ include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(/usr/include)
 
 add_compile_options(-g)
-add_executable(strava main.cpp src/Logger.cpp src/csvParser.cpp src/Connector.cpp src/StravaOAuth.cpp)
+add_executable(strava main.cpp src/Logger.cpp src/csvParser.cpp src/Connector.cpp src/StravaOAuth.cpp src/Analyzer.cpp)
 target_link_libraries(strava PRIVATE CURL::libcurl jsoncpp OpenSSL::SSL OpenSSL::Crypto Python3::Python Python3::NumPy)
 target_compile_definitions(strava PRIVATE CPPHTTPLIB_OPENSSL_SUPPORT)

@@ -18,27 +18,65 @@ std::string StravaOAuth::build_auth_url() const {
 }
 
 void StravaOAuth::start_local_server() {
-  std::cout << "[OAuth] Thread serveur démarré" << std::endl;
 
   httplib::Server svr;
 
-  svr.Get(
-      "/callback", [&](const httplib::Request &req, httplib::Response &res) {
-        if (req.has_param("code")) {
-          authorization_code = req.get_param_value("code");
-          server_running = false;
+  svr.Get("/callback",
+          [&](const httplib::Request &req, httplib::Response &res) {
+            if (req.has_param("code")) {
+              authorization_code = req.get_param_value("code");
+              logger.log(DEBUG, "[OAuth] Code reçu");
 
-          std::cout << "[OAuth] Code reçu dans thread : " << authorization_code
-                    << std::endl;
+              exchange_code_for_token();
+              logger.log(DEBUG, "[OAuth] Token reçu");
 
-          res.set_content("<h2>Fermer cette page pour continuer</h2>",
-                          "text/html"); // TODO : à voir si possible de faire le
-                                        // reste sur page web
+              ConnectionManager connection_manager(access_token);
+              connection_manager.execute();
 
-          svr.stop(); // <-- STOP !
-        }
-      });
+              Analyzer analyzer;
 
+              analyzer.set_up();
+              analyzer.extract();
+
+              analyzer.draw_graph(PER_TYPE);
+
+              std::string html = R"(
+                <html>
+                <head><title>Graphiques Strava</title></head>
+                <body>
+                    <h1>Vos graphiques Strava</h1>
+
+                    <h2>Allure</h2>
+                    <img src="/graphs/allure" width="900"/>
+
+                    <h2>EF vs VMA</h2>
+                    <img src="/graphs/ef_vma" width="900"/>
+
+                </body>
+                </html>
+            )";
+              res.set_content(html, "text/html");
+              server_running = false;
+            }
+          });
+
+  // Route pour servir les images PNG
+  svr.Get("/graphs/allure",
+          [&](const httplib::Request &, httplib::Response &res) {
+            std::ifstream f("output/allure_par_footing.png", std::ios::binary);
+            std::stringstream buffer;
+            buffer << f.rdbuf();
+            res.set_content(buffer.str(), "image/png");
+          });
+
+  svr.Get("/graphs/ef_vma",
+          [&](const httplib::Request &, httplib::Response &res) {
+            std::ifstream f("./output/allure_par_footing_selon_type.png",
+                            std::ios::binary);
+            std::stringstream buffer;
+            buffer << f.rdbuf();
+            res.set_content(buffer.str(), "image/png");
+          });
   svr.listen("localhost", 8080);
 
   std::cout << "[OAuth] Fin du thread serveur" << std::endl;
@@ -82,7 +120,6 @@ void StravaOAuth::authenticate() {
   std::cout << "[OAuth] Code final = " << authorization_code << std::endl;
 
   // Échange le code contre un token
-  exchange_code_for_token();
 }
 
 void StravaOAuth::exchange_code_for_token() {
