@@ -56,5 +56,9 @@ public:
   void draw_graph(graph_type type);
   void debug();
 
+  vector<Json::Value> get_filtered() { return this->filtered; }
+
   friend std::ostream &operator<<(std::ostream &out, const Analyzer &other);
 };
+
+extern Analyzer analyzer;

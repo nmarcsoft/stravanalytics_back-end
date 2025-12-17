@@ -1,5 +1,7 @@
 #include "Analyzer.hpp"
 
+Analyzer analyzer;
+
 int Analyzer::set_up() {
 
   if (!this->file.is_open()) {

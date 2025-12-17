@@ -33,8 +33,6 @@ void StravaOAuth::start_local_server() {
               ConnectionManager connection_manager(access_token);
               connection_manager.execute();
 
-              Analyzer analyzer;
-
               analyzer.set_up();
               analyzer.extract();
 
