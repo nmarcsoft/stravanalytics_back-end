@@ -8,3 +8,4 @@ CMakeCache.txt
 output/
 cmake_install.cmake
 output
+CMakeFiles/

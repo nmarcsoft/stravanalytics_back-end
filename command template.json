@@ -1,21 +1,22 @@
 {
-    "activities" : {
-        "id" : "",
-        "comments" : "",
-        "kudos": "",
-        "laps": "",
-        "contient": ""
-    },
-
-    "filtre" : {
-        "nom" : [],
-        "distance_max" : -1,
-        "distance_min" : -1,
-        "d+" : -1,
-        "duree_min": -1,
-        "duree_max": -1,
-        "date": ["", ""],
-        "comment" : []
-
-    }
+  "activities": {
+    "id": "",
+    "comments": "",
+    "kudos": "",
+    "laps": "",
+    "contient": ""
+  },
+  "filtre": {
+    "nom": [],
+    "distance_max": -1,
+    "distance_min": -1,
+    "d+": -1,
+    "duree_min": -1,
+    "duree_max": -1,
+    "date": [
+      "",
+      ""
+    ],
+    "comment": []
+  }
 }
