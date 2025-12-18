@@ -76,14 +76,38 @@ void StravaAuthController::register_routes(httplib::Server &server) {
                ConnectionManager Connector(this->access_token_);
                Connector.execute();
 
-               Analyzer analyzer;
                analyzer.set_up();
                analyzer.extract();
-               analyzer.debug();
+               // analyzer.debug();
 
                // Pour l'instant, redirection vers Vue
                res.set_redirect("http://localhost:5173/dashboard");
              });
+
+  server.Get(
+      "/api/activities", [&](const httplib::Request &, httplib::Response &res) {
+        res.set_header("Access-Control-Allow-Origin", "*");
+        res.set_header("Access-Control-Allow-Methods", "GET, OPTIONS");
+        res.set_header("Access-Control-Allow-Headers",
+                       "Content-Type, Authorization");
+        Json::Value root(Json::arrayValue);
+
+        Json::Value simplified;
+
+        for (const auto &activity : analyzer.get_filtered()) {
+          simplified["average_speed"] =
+              analyzer.speed_to_pace(activity["average_speed"].asDouble());
+          simplified["name"] = activity["name"];
+          simplified["start_date"] = activity["start_date"];
+          simplified["average_heartrate"] = activity["average_heartrate"];
+          root.append(simplified);
+        }
+
+        Json::StreamWriterBuilder writer;
+        std::string json_str = Json::writeString(writer, root);
+
+        res.set_content(json_str, "application/json");
+      });
 }
 
 std::string StravaAuthController::build_authorization_url() const {

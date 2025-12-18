@@ -153,6 +153,30 @@ main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/strava.dir/build.make CMakeFiles/strava.dir/main.cpp.s
 .PHONY : main.cpp.s
 
+src/Analyzer.o: src/Analyzer.cpp.o
+.PHONY : src/Analyzer.o
+
+# target to build an object file
+src/Analyzer.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/strava.dir/build.make CMakeFiles/strava.dir/src/Analyzer.cpp.o
+.PHONY : src/Analyzer.cpp.o
+
+src/Analyzer.i: src/Analyzer.cpp.i
+.PHONY : src/Analyzer.i
+
+# target to preprocess a source file
+src/Analyzer.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/strava.dir/build.make CMakeFiles/strava.dir/src/Analyzer.cpp.i
+.PHONY : src/Analyzer.cpp.i
+
+src/Analyzer.s: src/Analyzer.cpp.s
+.PHONY : src/Analyzer.s
+
+# target to generate assembly for a file
+src/Analyzer.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/strava.dir/build.make CMakeFiles/strava.dir/src/Analyzer.cpp.s
+.PHONY : src/Analyzer.cpp.s
+
 src/Connector.o: src/Connector.cpp.o
 .PHONY : src/Connector.o
 
@@ -200,6 +224,30 @@ src/Logger.s: src/Logger.cpp.s
 src/Logger.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/strava.dir/build.make CMakeFiles/strava.dir/src/Logger.cpp.s
 .PHONY : src/Logger.cpp.s
+
+src/StravaAuthController.o: src/StravaAuthController.cpp.o
+.PHONY : src/StravaAuthController.o
+
+# target to build an object file
+src/StravaAuthController.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/strava.dir/build.make CMakeFiles/strava.dir/src/StravaAuthController.cpp.o
+.PHONY : src/StravaAuthController.cpp.o
+
+src/StravaAuthController.i: src/StravaAuthController.cpp.i
+.PHONY : src/StravaAuthController.i
+
+# target to preprocess a source file
+src/StravaAuthController.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/strava.dir/build.make CMakeFiles/strava.dir/src/StravaAuthController.cpp.i
+.PHONY : src/StravaAuthController.cpp.i
+
+src/StravaAuthController.s: src/StravaAuthController.cpp.s
+.PHONY : src/StravaAuthController.s
+
+# target to generate assembly for a file
+src/StravaAuthController.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/strava.dir/build.make CMakeFiles/strava.dir/src/StravaAuthController.cpp.s
+.PHONY : src/StravaAuthController.cpp.s
 
 src/StravaOAuth.o: src/StravaOAuth.cpp.o
 .PHONY : src/StravaOAuth.o
@@ -261,12 +309,18 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... src/Analyzer.o"
+	@echo "... src/Analyzer.i"
+	@echo "... src/Analyzer.s"
 	@echo "... src/Connector.o"
 	@echo "... src/Connector.i"
 	@echo "... src/Connector.s"
 	@echo "... src/Logger.o"
 	@echo "... src/Logger.i"
 	@echo "... src/Logger.s"
+	@echo "... src/StravaAuthController.o"
+	@echo "... src/StravaAuthController.i"
+	@echo "... src/StravaAuthController.s"
 	@echo "... src/StravaOAuth.o"
 	@echo "... src/StravaOAuth.i"
 	@echo "... src/StravaOAuth.s"
