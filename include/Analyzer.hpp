@@ -55,6 +55,7 @@ public:
   int extract();
   void draw_graph(graph_type type);
   void debug();
+  double speed_to_pace(const double v);
 
   vector<Json::Value> get_filtered() { return this->filtered; }
 

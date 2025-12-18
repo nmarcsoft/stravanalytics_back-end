@@ -125,7 +125,11 @@ ostream &operator<<(ostream &out, const Analyzer &other) {
   return out;
 }
 
-double speed_to_pace(const double v) { return (1000.0 / v) / 60.0; }
+double Analyzer::speed_to_pace(const double v) {
+  double toReturn = (1000.0 / v) / 60;
+  cout << "Calcule allure du back-end :" << toReturn << endl;
+  return toReturn;
+}
 
 void Analyzer::draw_graph(graph_type type = DEFAULT) {
 
