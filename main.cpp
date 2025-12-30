@@ -1,6 +1,5 @@
 #include "Logger.hpp"
 #include "StravaAuthController.hpp"
-#include "StravaOAuth.hpp"
 #include "csvParser.hpp"
 #include <httplib.h>
 
