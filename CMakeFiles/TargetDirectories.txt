@@ -1,3 +1,0 @@
-/home/nicolas/Documents/perso/strava_application/CMakeFiles/strava.dir
-/home/nicolas/Documents/perso/strava_application/CMakeFiles/edit_cache.dir
-/home/nicolas/Documents/perso/strava_application/CMakeFiles/rebuild_cache.dir
