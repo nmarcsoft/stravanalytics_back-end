@@ -45,9 +45,11 @@ januray 2025 to the 31 decembre 2025 containing Test or Hello in the title.
 
 ### Result
 
-Once the program as run, you will have a file called **output.json**,
-containing all the runs you were looking for. And a pdf called **output.pdf**
-which contain a graph of your évolution
+Once you ran the backend and the frontend (/stravanalitics), go to your localhost port 5173 and track your prograssion on various training.
+
+https://github.com/user-attachments/assets/f9f4f91a-54d4-4a3b-9af4-458d3c45ff45
+
+
 
 ## Utility of the project
 
