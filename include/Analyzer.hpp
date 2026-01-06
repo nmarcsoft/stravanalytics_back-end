@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Logger.hpp>
-#include <Python.h>
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
@@ -9,8 +8,6 @@
 #include <iostream>
 #include <json/json.h>
 #include <limits>
-#include <pylifecycle.h>
-#include <pythonrun.h>
 #include <string>
 #include <tuple>
 
