@@ -14,6 +14,27 @@ First, you need to connect to strava and go on this link :
 [https://www.strava.com/settings/api](https://www.strava.com/settings/api)
 and copy/paste your Cliend_ID and Client_SECRET in the file var.csv.
 
+### Build the project
+
+to build it, you need : cmake and nodejs.
+```bash
+sudo pacman -S cmake
+sudo pacman -S nodejs-lts-jod
+```
+
+at the root of the project open 2 terminal, on the first one, run the back-end :
+```
+cmake -B build
+make -C build
+./build/strava
+```
+On the second one, the front-end :
+```
+cd stravanalytics/
+npm run dev
+```
+
+
 ### Command to send
 
 The command.json is quite simple, can put value in the pre-registered field,
@@ -45,9 +66,11 @@ januray 2025 to the 31 decembre 2025 containing Test or Hello in the title.
 
 ### Result
 
-Once the program as run, you will have a file called **output.json**,
-containing all the runs you were looking for. And a pdf called **output.pdf**
-which contain a graph of your évolution
+Once you ran the backend and the frontend (/stravanalitics), go to your localhost port 5173 and track your prograssion on various training.
+
+https://github.com/user-attachments/assets/f9f4f91a-54d4-4a3b-9af4-458d3c45ff45
+
+
 
 ## Utility of the project
 
