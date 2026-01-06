@@ -11,3 +11,4 @@ output
 CMakeFiles/
 CMakeFiles
 strava_response.json
+.env/
