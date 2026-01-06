@@ -14,7 +14,7 @@ int main(void) {
                             "http://localhost:8080/auth/callback");
 
   auth.register_routes(server);
-  server.listen("localhost", 8080);
+  server.listen("0.0.0.0", 8080);
   logger.log(WARNING, "[MAIN] : Stop listening");
   return 0;
   ;
