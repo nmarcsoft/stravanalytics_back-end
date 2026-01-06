@@ -249,30 +249,6 @@ src/StravaAuthController.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/strava.dir/build.make CMakeFiles/strava.dir/src/StravaAuthController.cpp.s
 .PHONY : src/StravaAuthController.cpp.s
 
-src/StravaOAuth.o: src/StravaOAuth.cpp.o
-.PHONY : src/StravaOAuth.o
-
-# target to build an object file
-src/StravaOAuth.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/strava.dir/build.make CMakeFiles/strava.dir/src/StravaOAuth.cpp.o
-.PHONY : src/StravaOAuth.cpp.o
-
-src/StravaOAuth.i: src/StravaOAuth.cpp.i
-.PHONY : src/StravaOAuth.i
-
-# target to preprocess a source file
-src/StravaOAuth.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/strava.dir/build.make CMakeFiles/strava.dir/src/StravaOAuth.cpp.i
-.PHONY : src/StravaOAuth.cpp.i
-
-src/StravaOAuth.s: src/StravaOAuth.cpp.s
-.PHONY : src/StravaOAuth.s
-
-# target to generate assembly for a file
-src/StravaOAuth.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/strava.dir/build.make CMakeFiles/strava.dir/src/StravaOAuth.cpp.s
-.PHONY : src/StravaOAuth.cpp.s
-
 src/csvParser.o: src/csvParser.cpp.o
 .PHONY : src/csvParser.o
 
@@ -321,9 +297,6 @@ help:
 	@echo "... src/StravaAuthController.o"
 	@echo "... src/StravaAuthController.i"
 	@echo "... src/StravaAuthController.s"
-	@echo "... src/StravaOAuth.o"
-	@echo "... src/StravaOAuth.i"
-	@echo "... src/StravaOAuth.s"
 	@echo "... src/csvParser.o"
 	@echo "... src/csvParser.i"
 	@echo "... src/csvParser.s"

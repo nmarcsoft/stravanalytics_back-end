@@ -1,13 +1,9 @@
 #include "Logger.hpp"
 #include "StravaAuthController.hpp"
-#include "csvParser.hpp"
 #include <httplib.h>
 
 int main(void) {
   logger.log(INFO, "Program Started.");
-
-  // Récupération de l'acess_token
-  Parser parser = Parser("var.csv");
 
   std::string client_id = getenv("CLIENT_ID");
   std::string client_secret = getenv("CLIENT_SECRET");

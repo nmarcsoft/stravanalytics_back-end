@@ -6,10 +6,36 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(CURL REQUIRED)
 find_package(OpenSSL REQUIRED)
 
-include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(/usr/include)
-
 add_compile_options(-g)
-add_executable(strava main.cpp src/Logger.cpp src/csvParser.cpp src/Connector.cpp src/Analyzer.cpp src/StravaAuthController.cpp)
-target_link_libraries(strava PRIVATE CURL::libcurl jsoncpp OpenSSL::SSL OpenSSL::Crypto)
+
+file(GLOB JSONCPP_SOURCES
+    external/jsoncpp/src/lib_json/*.cpp
+)
+
+add_executable(strava
+    main.cpp
+    src/Logger.cpp
+    src/Connector.cpp
+    src/Analyzer.cpp
+    src/StravaAuthController.cpp
+    ${JSONCPP_SOURCES}
+)
+
+# Includes projet
+target_include_directories(strava PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/external/httplib
+    ${PROJECT_SOURCE_DIR}/external/jsoncpp/include
+)
+
+
+# Options httplib
 target_compile_definitions(strava PRIVATE CPPHTTPLIB_OPENSSL_SUPPORT)
+
+# Libs système
+target_link_libraries(strava PRIVATE
+    CURL::libcurl
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    pthread
+)
