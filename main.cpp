@@ -7,11 +7,13 @@ int main(void) {
 
   std::string client_id = getenv("CLIENT_ID");
   std::string client_secret = getenv("CLIENT_SECRET");
+  const char *redirect_env = getenv("REDIRECT_URI");
+  std::string redirect_uri =
+      redirect_env ? redirect_env : "http://localhost:8080/auth/callback";
 
   httplib::Server server;
 
-  StravaAuthController auth(stoi(client_id), client_secret,
-                            "http://localhost:8080/auth/callback");
+  StravaAuthController auth(stoi(client_id), client_secret, redirect_uri);
 
   auth.register_routes(server);
   server.listen("0.0.0.0", 8080);
