@@ -71,14 +71,12 @@ void StravaAuthController::register_routes(httplib::Server &server) {
                std::string code = req.get_param_value("code");
                this->code_ = code;
 
-               // TODO (étape suivante) :
                exchange_code_for_token();
                ConnectionManager Connector(this->access_token_);
                Connector.execute();
 
                analyzer.set_up();
                analyzer.extract();
-               // analyzer.debug();
 
                // Pour l'instant, redirection vers Vue
                res.set_redirect("http://localhost:5173/dashboard");

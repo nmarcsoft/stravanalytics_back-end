@@ -1,7 +1,13 @@
 #include "Analyzer.hpp"
 
+// Global structure defined in the Analyzer.hpp file
 Analyzer analyzer;
 
+/*! \brief Made to set_up the data in the Analyzer Class
+ *         Should be used once, before using the Analyzer class
+ *
+ * @param None
+ */
 int Analyzer::set_up() {
 
   if (!this->file.is_open()) {
@@ -32,6 +38,13 @@ int Analyzer::set_up() {
   return 0;
 }
 
+/*! \brief Made to sort the data from strava_response.json
+ *        This function will parse it, and register the usefull data in
+ * Analyzer->filtered
+ * To know how to sort, you need to set the file 'command.json'
+ *
+ * @param None
+ */
 int Analyzer::extract() {
   std::ifstream input("strava_response.json");
 
@@ -94,14 +107,25 @@ int Analyzer::extract() {
   return 1;
 }
 
-// TODO sort the data
+/*! \brief Made to sort the data in Analyzer->filtered
+ *        You need to fill Analyzer->filtered before, using the
+ * Analyzer::extract() funtion
+ *
+ * @param None
+ */
 void Analyzer::sorter() {
+  // TODO sort the data
   std::sort(this->filtered.begin(), this->filtered.end(),
             [](const Json::Value &lha, const Json::Value &rha) {
               return lha["name"].asString() < rha["name"].asString();
             });
 }
 
+/*! \brief Made to write to the file 'output/output.json' the data amoung the
+ * Analyzer->filtered
+ *
+ * @param None
+ */
 void Analyzer::debug() {
   ofstream filtered_run("output/output.json");
   for (auto &run : this->filtered) {
@@ -109,6 +133,11 @@ void Analyzer::debug() {
   }
 }
 
+/*! \brief Overloading of the write function to log intelligent data to
+ * log the filter of the analyzer
+ *
+ * @param None
+ */
 ostream &operator<<(ostream &out, const Analyzer &other) {
   out << "Name filter :" << endl;
   for (auto &it : other.name_filter) {
@@ -125,105 +154,13 @@ ostream &operator<<(ostream &out, const Analyzer &other) {
   return out;
 }
 
+/*! \brief Function to convert the speed to a min/km unit
+ *
+ * @param double v : The input speed to convert
+ * @return double : The speed converted
+ */
 double Analyzer::speed_to_pace(const double v) {
   double toReturn = (1000.0 / v) / 60;
   cout << "Calcule allure du back-end :" << toReturn << endl;
   return toReturn;
-}
-
-void Analyzer::draw_graph(graph_type type = DEFAULT) {
-
-  if (type == DEFAULT) {
-    std::ostringstream ss_speed;
-    std::ostringstream ss_bpm;
-    std::ostringstream ss_x;
-
-    // x = RUN y = PACE & BPM
-    vector<unsigned int> x;
-    unsigned int i = 0u;
-
-    for (auto &it : this->filtered) {
-      if (it.isMember("average_heartrate")) {
-        ss_bpm << it["average_heartrate"].asInt();
-      } else {
-        ss_bpm << 0;
-      }
-      if (it.isMember("average_speed")) {
-        ss_speed << speed_to_pace(it["average_speed"].asDouble());
-      } else {
-        ss_speed << 0.f;
-      }
-      ss_x << i;
-
-      if (i + 1 < this->filtered.size()) {
-        ss_speed << ",";
-        ss_bpm << ",";
-        ss_x << ",";
-      }
-
-      i++;
-    }
-    string speed_list = ss_speed.str();
-    string bpm_list = ss_bpm.str();
-    string x_list = ss_x.str();
-
-    std::string file_to_execute = "src/graphics/graphique_pace.py";
-    std::string commande = "python3 ";
-    std::string argument = ss_x.str() + " " + ss_speed.str();
-
-    system((commande + file_to_execute + " " + argument).c_str());
-  } else if (type == PER_TYPE) {
-
-    std::ostringstream x_list, pace_vma, pace_ef, bpm_vma, bpm_ef, other;
-    int i = 1;
-
-    for (auto &it : this->filtered) {
-      std::string name = it["name"].asString();
-      if (name.find("EF") != std::string::npos) {
-        // On a une EF
-        pace_ef << speed_to_pace(it["average_speed"].asDouble());
-        x_list << i;
-
-        pace_ef << ",";
-        x_list << ",";
-        i++;
-
-      } else if (name.find("VMA") != std::string::npos) {
-        // VMA
-        pace_vma << speed_to_pace(it["average_speed"].asDouble());
-        x_list << i;
-
-        pace_vma << ",";
-        x_list << ",";
-        i++;
-      }
-    }
-
-    string arg1 = x_list.str();
-    string arg2 = pace_vma.str();
-    string arg3 = pace_ef.str();
-
-    // Dirty code coming :
-    if (!arg1.empty()) {
-      arg1.pop_back();
-    }
-
-    if (!arg2.empty()) {
-      arg2.pop_back();
-    }
-
-    if (!arg3.empty()) {
-      arg3.pop_back();
-    }
-
-    cout << "arg1 = " << arg1 << endl;
-    cout << "arg2 = " << arg2 << endl;
-    cout << "arg3 = " << arg3 << endl;
-
-    std::string file_to_execute = "src/graphics/graphique_splited.py";
-    std::string commande = "python3 ";
-    std::string argument = arg1 + " " + arg2 + " " + arg3;
-
-    system((commande + file_to_execute + " " + argument).c_str());
-  }
 }
